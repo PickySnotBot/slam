@@ -1,0 +1,77 @@
+slam_toolbox:
+  ros__parameters:
+    # Plugin and solver settings
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: HuberLoss  # Helps with outliers for more accurate matching
+    
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+    mode: localization  # Switch to localization mode for precise scan matching
+
+    # Optional starting configuration for localization
+    map_file_name: /path/to/saved/map # Update with actual path
+    # map_start_pose: [0.0, 0.0, 0.0]  # Optionally provide starting pose, or start near dock
+    
+    debug_logging: false
+    throttle_scans: 0  # No throttling, process every scan for highest accuracy
+    transform_publish_period: 0.01  # Publish map-to-odom transforms at 10 ms intervals for smooth localization
+    map_update_interval: 1.0  # Update map every second for high accuracy
+
+    # Map resolution and laser range
+    resolution: 0.02  # Higher resolution map for more detail in small spaces
+    max_laser_range: 12.0  # Keep laser range broad for future use in larger environments
+    minimum_time_interval: 0.0  # Process every scan for maximum accuracy
+    transform_timeout: 0.2  # Small timeout for transform lookups
+    tf_buffer_duration: 30.0  # Keep transform buffer large for loop closures
+
+    # Stack size (large for serializing large maps)
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true  # Enable manual corrections if necessary
+
+    # General Parameters
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.1  # Process more frequently for finer details
+    minimum_travel_heading: 0.1  # Process on smaller heading changes
+    scan_buffer_size: 20  # Larger buffer size for scan processing
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.2
+    link_scan_maximum_distance: 1.0
+    loop_search_maximum_distance: 2.0  # Shorter search range in smaller apartment
+
+    # Enable loop closure and adjust for small environments
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 5  # Smaller chain size to handle loop closures in small spaces
+    loop_match_maximum_variance_coarse: 2.0
+    loop_match_minimum_response_coarse: 0.2
+    loop_match_minimum_response_fine: 0.3
+
+    # Correlation Parameters for precise scan matching
+    correlation_search_space_dimension: 0.4  # Smaller space for small apartments
+    correlation_search_space_resolution: 0.005  # High resolution for accurate scan matching
+    correlation_search_space_smear_deviation: 0.05
+
+    # Loop Closure Parameters
+    loop_search_space_dimension: 5.0  # Adjusted for apartment size
+    loop_search_space_resolution: 0.02  # Fine resolution for better matching in smaller spaces
+    loop_search_space_smear_deviation: 0.02
+
+    # Scan Matcher Parameters
+    distance_variance_penalty: 0.3  # Less penalty on distance for higher accuracy
+    angle_variance_penalty: 0.7  # More sensitive to angle differences for accurate scans
+    fine_search_angle_offset: 0.00175  # Fine angle search
+    coarse_search_angle_offset: 0.1745  # Coarse angle search
+    coarse_angle_resolution: 0.01745  # Higher resolution for fine matching
+    minimum_angle_penalty: 0.6  # Minimize angle penalty
+    minimum_distance_penalty: 0.3  # Minimize distance penalty
+    use_response_expansion: true  # Automatically expand search space for better matches
+
+    # Localization-specific settings
+    mode: localization  # Ensure we're in localization mode after mapping
